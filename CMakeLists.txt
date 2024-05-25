@@ -7,6 +7,10 @@ project(stealthflix
   DESCRIPTION "A small website for all your streamig needs"
 )
 
+# Cmake settings
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+
 # add sub modules
 set(CROW_FEATURES  ssl  compression)
 add_subdirectory("extern/Crow/")
@@ -21,3 +25,4 @@ target_link_libraries(stealthflix Crow::Crow)
 # adding project sources and headers
 
 
+# copying over directories

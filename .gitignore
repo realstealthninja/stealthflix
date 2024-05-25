@@ -1,2 +1,6 @@
 # build
 build/
+
+# IDE stuff
+compile_commands.json
+.cache/
