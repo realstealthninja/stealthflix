@@ -4,3 +4,6 @@
 [submodule "extern/Crow"]
 	path = extern/Crow
 	url = https://github.com/CrowCpp/Crow.git
+[submodule "extern/sdk"]
+	path = extern/sdk
+	url = https://github.com/meganz/sdk.git

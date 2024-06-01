@@ -15,11 +15,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CROW_FEATURES  ssl  compression)
 add_subdirectory("extern/Crow/")
 
+## MEGA.nz SDK
+add_subdirectory("extern/sdk/")
+
 # adding executable
 add_executable(stealthflix main.cpp)
 
 # link packages 
-target_link_libraries(stealthflix Crow::Crow)
+target_link_libraries(stealthflix Crow::Crow MEGA::SDKlib)
 
 
 # adding project sources and headers
