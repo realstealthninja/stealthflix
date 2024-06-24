@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28.10)
+cmake_minimum_required(VERSION 3.25.1)
 
 
 project(stealthflix
