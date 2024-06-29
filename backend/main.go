@@ -7,26 +7,10 @@ import (
 
 	"stealthflix-backend/cmd"
 
-	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
 
-type MediaValidator struct {
-	validator *validator.Validate
-}
-
-func (mv *MediaValidator) Validate(i interface{}) error {
-	if err := mv.validator.Struct(i); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-	return nil
-}
-
-func test(ctx echo.Context) error {
-	return ctx.String(http.StatusOK, "<html></html>")
-}
-
-func movies(ctx echo.Context) error {
+func list(ctx echo.Context) error {
 
 	movies := cmd.GetMovieList()
 
@@ -35,28 +19,30 @@ func movies(ctx echo.Context) error {
 }
 
 func getMovie(ctx echo.Context) error {
-	movieName, err := url.PathUnescape(ctx.Param("name"))
+	name, err := url.PathUnescape(ctx.QueryParam("name"))
 
 	if err != nil {
+
 		log.Fatal(err)
+		return ctx.String(http.StatusBadRequest, "bad request")
 	}
-	log.Println(movieName)
-	movies := cmd.GetMovies(movieName)
+
+	movies := cmd.GetMovies(name)
 
 	return ctx.JSON(http.StatusOK, movies)
 }
 
-func moviesPost(ctx echo.Context) error {
-	movie := new(cmd.Media)
-	var err error
-	if err = ctx.Bind(movie); err != nil {
+func sources(ctx echo.Context) error {
+	link, err := url.PathUnescape(ctx.QueryParam("link"))
+	name, err2 := url.PathUnescape(ctx.QueryParam("name"))
+
+	if err != nil || err2 != nil {
+
+		log.Fatal(err)
 		return ctx.String(http.StatusBadRequest, "bad request")
 	}
-	if err = ctx.Validate(movie); err != nil {
-		return err
-	}
 
-	sources := cmd.GetSources(*movie)
+	sources := cmd.GetSources(cmd.Media{Name: name, Link: link})
 
 	return ctx.JSON(http.StatusOK, sources)
 
@@ -64,14 +50,12 @@ func moviesPost(ctx echo.Context) error {
 
 func main() {
 	e := echo.New()
-	e.Validator = &MediaValidator{validator: validator.New()}
 
-	e.GET("/test", test)
+	e.GET("/api/movies/list", list)
 
-	e.GET("/api/movies/", movies)
-	e.POST("/api/movies/", moviesPost)
+	e.GET("/api/movies/sources", sources)
 
-	e.GET("/api/movies/:name", getMovie)
+	e.GET("/api/movies/get", getMovie)
 
 	// serve angular front end
 	e.Static("/", "static")
