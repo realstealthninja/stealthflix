@@ -48,6 +48,18 @@ func sources(ctx echo.Context) error {
 
 }
 
+func download(ctx echo.Context) error {
+	var source cmd.Media
+	err := ctx.Bind(&source)
+
+	if err != nil {
+		log.Println(err.Error())
+		return ctx.String(http.StatusBadRequest, "bad request")
+	}
+
+	return ctx.String(http.StatusOK, cmd.SaveMovie(source))
+}
+
 func main() {
 	e := echo.New()
 
@@ -56,6 +68,8 @@ func main() {
 	e.GET("/api/movies/sources", sources)
 
 	e.GET("/api/movies/get", getMovie)
+
+	e.POST("api/movies/download", download)
 
 	// serve angular front end
 	e.Static("/", "static")
