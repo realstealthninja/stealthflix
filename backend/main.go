@@ -45,7 +45,6 @@ func sources(ctx echo.Context) error {
 	sources := cmd.GetSources(cmd.Media{Name: name, Link: link})
 
 	return ctx.JSON(http.StatusOK, sources)
-
 }
 
 func download(ctx echo.Context) error {
@@ -60,6 +59,16 @@ func download(ctx echo.Context) error {
 	return ctx.String(http.StatusOK, cmd.SaveMovie(source))
 }
 
+func serve(ctx echo.Context) error {
+	path, _ := url.PathUnescape(ctx.QueryParam("path"))
+
+	if cmd.MovieFileExists(path) {
+		return ctx.File(path)
+	}
+
+	return ctx.String(http.StatusInternalServerError, "file not found")
+}
+
 func main() {
 	e := echo.New()
 
@@ -69,7 +78,9 @@ func main() {
 
 	e.GET("/api/movies/get", getMovie)
 
-	e.POST("api/movies/download", download)
+	e.POST("/api/movies/download", download)
+
+	e.GET("/api/movies/get/:path", serve)
 
 	// serve angular front end
 	e.Static("/", "static")
