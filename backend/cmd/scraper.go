@@ -43,7 +43,7 @@ func ReloadMovies() {
 		if element.Text == "Parent Directory" {
 			return
 		}
-		movies = append(movies, Media{element.Text, "https://vadapav.mov" + element.Attr("href")})
+		movies = append(movies, Media{element.Text, element.Attr("href")})
 	})
 
 	c.Visit("https://vadapav.mov/f36be06f-8edd-4173-99df-77bc4c7c2626/")
@@ -63,7 +63,7 @@ func GetMovies(name string) []Media {
 		}
 
 		if strings.Contains(strings.ReplaceAll(strings.ToLower(element.Text), ",", ""), strings.ReplaceAll(strings.ToLower(name), ",", ",")) {
-			_movies = append(_movies, Media{element.Text, "https://vadapav.mov" + element.Attr("href")})
+			_movies = append(_movies, Media{element.Text, element.Attr("href")})
 		}
 
 	})
@@ -82,14 +82,13 @@ func GetSources(movie Media) []Media {
 
 		exts := strings.Split(element.Text, ".")
 		ext := exts[len(exts)-1]
-		sources = append(sources, Media{movie.Name + ext, "https://vadapav.mov" + element.Attr("href")})
+		sources = append(sources, Media{movie.Name + ext, element.Attr("href")})
 	})
-	cSourceFinder.Visit(movie.Link)
+	cSourceFinder.Visit("https://www.vadapav.mov" + movie.Link)
 	return sources
 }
 
 func SaveMovie(source Media) string {
-
 	cDownload.OnResponse(func(r *colly.Response) {
 		log.Println("Downloading...")
 		err := r.Save("assets/movies/" + source.Name)
@@ -99,7 +98,7 @@ func SaveMovie(source Media) string {
 
 		log.Println("Download Finfished!")
 	})
-	cDownload.Visit(source.Link)
+	cDownload.Visit("https://www.vadapav.mov" + source.Link)
 
 	return "assets/movies/" + source.Name
 }
