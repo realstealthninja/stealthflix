@@ -1,0 +1,8 @@
+<main>
+    <h1>Welcome to stealthyflix</h1>
+    <ul #grid>
+        @for (movie of movies; track movie.Name) {
+            <li><button (click)="getMovie(movie)">{{movie.Name}}</button></li> 
+        }
+    </ul>
+</main>
