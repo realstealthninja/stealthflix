@@ -36,6 +36,8 @@ func sources(ctx echo.Context) error {
 	link, err := url.PathUnescape(ctx.QueryParam("link"))
 	name, err2 := url.PathUnescape(ctx.QueryParam("name"))
 
+	log.Println(ctx.RealIP() + ": Requested for sources of  " + name)
+
 	if err != nil || err2 != nil {
 
 		log.Fatal(err)
@@ -43,7 +45,6 @@ func sources(ctx echo.Context) error {
 	}
 
 	sources := cmd.GetSources(cmd.Media{Name: name, Link: link})
-
 	return ctx.JSON(http.StatusOK, sources)
 }
 
@@ -62,11 +63,14 @@ func download(ctx echo.Context) error {
 func serve(ctx echo.Context) error {
 	path, _ := url.PathUnescape(ctx.QueryParam("path"))
 
+	log.Println(path)
+
 	if cmd.MovieFileExists(path) {
 		return ctx.File(path)
 	}
 
-	return ctx.String(http.StatusInternalServerError, "file not found")
+	cmd.SaveMovie(cmd.GetMovies(path)[0])
+	return ctx.String(http.StatusOK, "downloading movie")
 }
 
 func main() {
