@@ -21,17 +21,15 @@ export class ViewerComponent {
 
   ngOnInit() {
     var movie: Media = {Name: "", Link: ""};
-    var name = this.route.snapshot.queryParamMap.get("name");
-    var link = this.route.snapshot.queryParamMap.get("link");
+    var name = this.route.snapshot.paramMap.get("name");
+    var link = this.route.snapshot.paramMap.get("link");
 
     if (name && link) {
       movie.Name = name;
       movie.Link = link;
 
       this.movieApiService.stream_movie(movie).then(Promise => {
-        if (Promise.statusText == "downloading") {
-          console.log("downloading");
-        }
+        this.movieApiService.download_movie(movie)
       })
     }
 
