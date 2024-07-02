@@ -108,7 +108,7 @@ func SaveMovie(source Media) string {
 	totalBytes := response.ContentLength
 	var downloadedBytes int64 = 0
 
-	//                     10 mb buffer size
+	//                     3 mb buffer size
 	buffer := make([]byte, 3072*1024)
 
 	for {
@@ -121,7 +121,7 @@ func SaveMovie(source Media) string {
 			}
 			downloadedBytes += int64(n)
 
-			log.Printf("Downloaded %.2f %%, (%d mb / %d mb) \n", (100 * (downloadedBytes / totalBytes)), (downloadedBytes / (1024 * 1024)), (totalBytes / (1024 * 1024)))
+			log.Printf("Downloaded %d %%, (%d mb / %d mb) \n", (100 * (downloadedBytes / totalBytes)), (downloadedBytes / (1024 * 1024)), (totalBytes / (1024 * 1024)))
 		}
 		if err == io.EOF {
 			break
