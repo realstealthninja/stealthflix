@@ -61,16 +61,16 @@ func download(ctx echo.Context) error {
 }
 
 func serve(ctx echo.Context) error {
-	path, _ := url.PathUnescape(ctx.QueryParam("path"))
-
-	log.Println(path)
+	path, err := url.PathUnescape(ctx.QueryParam("path"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
 
 	if cmd.MovieFileExists(path) {
 		return ctx.File(path)
 	}
 
-	cmd.SaveMovie(cmd.GetMovies(path)[0])
-	return ctx.String(http.StatusOK, "downloading movie")
+	return ctx.String(http.StatusOK, "Content not downloaded")
 }
 
 func main() {
