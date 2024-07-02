@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -12,6 +15,8 @@ type Media struct {
 	Name string `json:"Name" validate:"required"`
 	Link string `json:"Link" validate:"required"`
 }
+
+var download_status = [5]int{0, 0, 0, 0, 0}
 
 var movies []Media
 
@@ -81,7 +86,7 @@ func GetSources(movie Media) []Media {
 		}
 
 		exts := strings.Split(element.Text, ".")
-		ext := exts[len(exts)-1]
+		ext := "." + exts[len(exts)-1]
 		sources = append(sources, Media{movie.Name + ext, element.Attr("href")})
 	})
 	cSourceFinder.Visit("https://www.vadapav.mov" + movie.Link)
@@ -89,16 +94,42 @@ func GetSources(movie Media) []Media {
 }
 
 func SaveMovie(source Media) string {
-	cDownload.OnResponse(func(r *colly.Response) {
-		log.Println("Downloading...")
-		err := r.Save("assets/movies/" + source.Name)
-		if err != nil {
-			log.Println(err)
+	fileName := source.Name
+
+	response, err := http.Get("https://www.vadapav.mov" + source.Link)
+	file, err2 := os.Create("assets/movies/" + fileName)
+
+	if err != nil {
+		log.Fatalln(err.Error())
+	} else if err2 != nil {
+		log.Fatalln(err2.Error())
+	}
+
+	totalBytes := response.ContentLength
+	var downloadedBytes int64 = 0
+
+	//                     10 mb buffer size
+	buffer := make([]byte, 3072*1024)
+
+	for {
+		n, err := response.Body.Read(buffer)
+
+		if n > 0 {
+			_, werr := file.Write(buffer[:n])
+			if werr != nil {
+				log.Fatalln(werr.Error())
+			}
+			downloadedBytes += int64(n)
+
+			log.Printf("Downloaded %.2f %%, (%d mb / %d mb) \n", (100 * (downloadedBytes / totalBytes)), (downloadedBytes / (1024 * 1024)), (totalBytes / (1024 * 1024)))
 		}
-
-		log.Println("Download Finfished!")
-	})
-	cDownload.Visit("https://www.vadapav.mov" + source.Link)
-
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalln(err.Error())
+		}
+	}
+	log.Println("download completed")
 	return "assets/movies/" + source.Name
 }
