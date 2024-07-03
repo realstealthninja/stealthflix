@@ -12,11 +12,9 @@ import (
 )
 
 type Media struct {
-	Name string `json:"Name" validate:"required"`
-	Link string `json:"Link" validate:"required"`
+	Name string
+	Link string
 }
-
-var download_status = [5]int{0, 0, 0, 0, 0}
 
 var movies []Media
 
