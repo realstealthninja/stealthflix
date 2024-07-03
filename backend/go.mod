@@ -7,7 +7,10 @@ require github.com/labstack/echo/v4 v4.12.0
 require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 )
 
 require (
@@ -35,4 +38,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
+	gorm.io/driver/sqlite v1.5.6
+	gorm.io/gorm v1.25.10
 )
