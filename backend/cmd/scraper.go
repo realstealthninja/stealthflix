@@ -108,6 +108,9 @@ func SaveMovie(source Media) string {
 
 	//                     3 mb buffer size
 	buffer := make([]byte, 3072*1024)
+	movie := Media{strings.Split(source.Name, ".")[0], source.Link}
+
+	Insert(movie, "assets/movies/"+fileName, downloadedBytes, totalBytes)
 
 	for {
 		n, err := response.Body.Read(buffer)
@@ -118,6 +121,7 @@ func SaveMovie(source Media) string {
 				log.Fatalln(werr.Error())
 			}
 			downloadedBytes += int64(n)
+			SetDownload(movie, downloadedBytes)
 
 			log.Printf("Downloaded %d %%, (%d mb / %d mb) \n", (100 * (downloadedBytes / totalBytes)), (downloadedBytes / (1024 * 1024)), (totalBytes / (1024 * 1024)))
 		}
