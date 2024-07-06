@@ -73,6 +73,19 @@ func serve(ctx echo.Context) error {
 	return ctx.String(http.StatusOK, "Content not downloaded")
 }
 
+func status(ctx echo.Context) error {
+	name, err := url.PathUnescape((ctx.QueryParam("name")))
+	link, err2 := url.PathUnescape(ctx.QueryParam("link"))
+	if err != nil {
+		log.Fatalln(err.Error())
+	} else if err2 != nil {
+		log.Fatalln(err2.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, cmd.DownloadStatus(cmd.Media{Name: name, Link: link}))
+
+}
+
 func main() {
 	e := echo.New()
 
@@ -85,6 +98,8 @@ func main() {
 	e.POST("/api/movies/download", download)
 
 	e.GET("/api/movies/get/:path", serve)
+
+	e.GET("/api/downloads/status", status)
 
 	// serve angular front end
 	e.Static("/", "static")
