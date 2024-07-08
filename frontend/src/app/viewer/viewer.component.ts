@@ -13,23 +13,24 @@ import { Media } from '../media';
 })
 export class ViewerComponent {
   src: string = "";
-
+  
+  movie!: Media; 
 
   constructor(private movieApiService: MoviesApiService, private route: ActivatedRoute) {
 
   }
 
   ngOnInit() {
-    var movie: Media = {Name: "", Link: ""};
+    this.movie = {Name: "", Link: ""};
     var name = this.route.snapshot.paramMap.get("name");
     var link = this.route.snapshot.paramMap.get("link");
 
     if (name && link) {
-      movie.Name = name;
-      movie.Link = link;
+      this.movie.Name = name;
+      this.movie.Link = link;
 
-      this.movieApiService.stream_movie(movie).then(Promise => {
-        this.movieApiService.download_movie(movie)
+      this.movieApiService.stream_movie(this.movie).then(Promise => {
+        this.movieApiService.download_movie(this.movie)
       })
     }
 
@@ -38,4 +39,4 @@ export class ViewerComponent {
 
 
   }
-}
+}let
