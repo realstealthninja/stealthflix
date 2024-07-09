@@ -33,10 +33,5 @@ export class ViewerComponent {
         this.movieApiService.download_movie(this.movie)
       })
     }
-
-
-  
-
-
   }
 }
